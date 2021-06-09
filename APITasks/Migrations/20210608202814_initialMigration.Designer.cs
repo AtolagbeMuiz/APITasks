@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace APITasks.Migrations
 {
     [DbContext(typeof(ApiTaskDBContext))]
-    [Migration("20210604161957_InitialMigration")]
-    partial class InitialMigration
+    [Migration("20210608202814_initialMigration")]
+    partial class initialMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -74,6 +74,30 @@ namespace APITasks.Migrations
                     b.HasKey("UserId");
 
                     b.ToTable("RegisterUser");
+                });
+
+            modelBuilder.Entity("APITasks.Models.UserEvents", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("EventDescription")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("EventId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("EventVenue")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("UserEvent");
                 });
 #pragma warning restore 612, 618
         }

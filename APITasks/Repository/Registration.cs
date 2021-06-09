@@ -50,20 +50,28 @@ namespace APITasks.Repository
 
         public async Task<string> SendPasswordResetLinkEmail(string email, string link)
         {
-            var user = await _context.RegisterUser.Where(user => user.Email == email).FirstOrDefaultAsync();
-            if (user != null)
+            try
             {
-                string subject = "Reset Password";
-                string message = "Hi there,<br/><br/>We got a request for resetting your account password. Please click the link below to reset your password."
-                                  + "<br/><br/>" + "<a href=" + link + ">Reset Password Link</a>";
+                var user = await _context.RegisterUser.Where(user => user.Email == email).FirstOrDefaultAsync();
+                if (user != null)
+                {
+                    string subject = "Reset Password";
+                    string message = "Hi there,<br/><br/>We got a request for resetting your account password. Please click the link below to reset your password."
+                                      + "<br/><br/>" + "<a href=" + link + ">Reset Password Link</a>";
 
-                await _emailSender.SendEmailAsync(email, subject, message);
+                    await _emailSender.SendEmailAsync(email, subject, message);
 
-                return "Password reset link has been sent to your email...";
+                    return "Password reset link has been sent to your email...";
+                }
+                else
+                {
+                    return "User not found...";
+                }
             }
-            else
+            catch (Exception ex)
             {
-                return "User not found...";
+                string errorMessage = ex.Message.ToString();
+                return errorMessage;
             }
         }
 

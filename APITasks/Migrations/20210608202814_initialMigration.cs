@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace APITasks.Migrations
 {
-    public partial class InitialMigration : Migration
+    public partial class initialMigration : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -39,6 +39,21 @@ namespace APITasks.Migrations
                 {
                     table.PrimaryKey("PK_RegisterUser", x => x.UserId);
                 });
+
+            migrationBuilder.CreateTable(
+                name: "UserEvent",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    EventId = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    EventDescription = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    EventVenue = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserEvent", x => x.Id);
+                });
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -48,6 +63,9 @@ namespace APITasks.Migrations
 
             migrationBuilder.DropTable(
                 name: "RegisterUser");
+
+            migrationBuilder.DropTable(
+                name: "UserEvent");
         }
     }
 }

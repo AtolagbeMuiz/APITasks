@@ -13,10 +13,9 @@ namespace APITasks.Services
 {
     public class EmailSender : IEmailSender
     {
-        //private readonly IConfiguration _config;
-
         private readonly SMTPConfigModel _config;
 
+        //This retrieves the value in the SMTPConfigModel class and initializes to the field 
         public EmailSender(IOptions<SMTPConfigModel> options)
         {
             this._config = options.Value;
@@ -30,26 +29,37 @@ namespace APITasks.Services
 
         public async Task Execute(string email, string subject, string message)
         {
-            MailMessage mail = new MailMessage
+            try
             {
-                Subject = subject,
-                Body = message,
-                From = new MailAddress(_config.SenderAddress, _config.SenderDisplayName),
-                IsBodyHtml = _config.IsBodyHtml
-            };
+                //This MailMessage class represent an Email message with properties that composed the mail
+                MailMessage mail = new MailMessage
+                {
+                    Subject = subject,
+                    Body = message,
+                    From = new MailAddress(_config.SenderAddress, _config.SenderDisplayName),
+                    IsBodyHtml = _config.IsBodyHtml
+                };
+                mail.To.Add(email);
 
-            NetworkCredential networkCredentials = new NetworkCredential(_config.Username, _config.Password);
+                //this involves the credentials needed to gain access to mailtrap SMTP server
+                NetworkCredential networkCredentials = new NetworkCredential(_config.Username, _config.Password);
 
-            SmtpClient smtpClient = new SmtpClient
+                SmtpClient smtpClient = new SmtpClient
+                {
+                    Host = _config.Host,
+                    Port = _config.Port,
+                    EnableSsl = _config.EnableSSL,
+                    Credentials = networkCredentials
+                };
+                
+                mail.BodyEncoding = Encoding.Default;
+                await smtpClient.SendMailAsync(mail);
+            }
+            catch (Exception ex)
             {
-                Host = _config.Host,
-                Port = _config.Port,
-                EnableSsl = _config.EnableSSL,
-                Credentials = networkCredentials
-            };
-
-            mail.BodyEncoding = Encoding.Default;
-            await smtpClient.SendMailAsync(mail);
+                var errorMessage = ex.Message.ToString();
+                //throw;
+            }
         }
 
 
